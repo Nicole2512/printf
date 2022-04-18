@@ -1,6 +1,26 @@
 #ifndef HEADER_MAIN
 #define HEADER_MAIN
+
+#include <unistd.h>
+#include <stdlib.h>
 #include <stdarg.h>
+
+/**
+* struct convert - defines a structure for symbols and functions
+*
+* @sym: The operator
+* @f: The function associated
+*/
+struct conversion
+{
+	char *sym;
+	int (*f)(va_list);
+};
+typedef struct conversion conver_t;
+
+
+
+/* functions */
 int _putchar(char c);
 void _puts(char *str);
 int _strlen(char *s);
