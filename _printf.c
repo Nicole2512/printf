@@ -1,113 +1,75 @@
 #include "main.h"
 
 /**
- *_printf - printf
- *@format: const char pointer
- *Description: this functions implement some functions of printf
- *Return: num of characteres printed
+ * print_op - function to check which specifier to print
+ * @format: string being passed
+ * @print_arr: array of struct ops
+ * @list: list of arguments to print
+ * Return: numb of char to be printed
+ */
+int print_op(const char *format, fmt_t *print_arr, va_list list)
+{
+	char a;
+	int count = 0, b = 0, c = 0;
+
+	a = format[b];
+	while (a != '\0')
+	{
+		if (a == '%')
+		{
+			c = 0;
+			b++;
+			a = format[b];
+			while (print_arr[c].type != NULL &&
+			       a != *(print_arr[c].type))
+				c++;
+			if (print_arr[c].type != NULL)
+				count = count + print_arr[c].f(list);
+			else
+			{
+				if (a == '\0')
+					return (-1);
+				if (a != '%')
+					count += _putchar('%');
+				count += _putchar(a);
+			}
+		}
+		else
+			count += _putchar(a);
+		b++;
+		a = format[b];
+	}
+	return (count);
+}
+
+/**
+ * _printf - prints output according to format
+ * @format: string being passed
+ * Return: char to be printed
  */
 int _printf(const char *format, ...)
 {
-	const char *string;
-	int cont = 0;
-	va_list arg;
+	va_list list;
+	int a = 0;
 
-	if (!format)
+	fmt_t ops[] = {
+		{"c", ch},
+		{"s", str},
+		{"d", _int},
+		{"b", _bin},
+		{"i", _int},
+		{"u", _ui},
+		{"o", _oct},
+		{"x", _hex_l},
+		{"X", _hex_u},
+		{"R", _rot13},
+		{NULL, NULL}
+	};
+
+	if (format == NULL)
 		return (-1);
-
-	va_start(arg, format);
-	string = format;
-
-	cont = loop_format(arg, string);
-
-	va_end(arg);
-	return (cont);
-}
-
-/**
- *loop_format - loop format
- *@arg: va_list arg
- *@string: pointer from format
- *Description: This function make loop tp string pointer
- *Return: num of characteres printed
- */
-int loop_format(va_list arg, const char *string)
-{
-	int i = 0, flag = 0, cont_fm = 0, cont = 0, check_per = 0;
-
-	while (i < _strlen((char *)string) && *string != '\0')
-	{
-		char aux = string[i];
-
-		if (aux == '%')
-		{
-			i++, flag++;
-			aux = string[i];
-			if (aux == '\0' && _strlen((char *)string) == 1)
-				return (-1);
-			if (aux == '\0')
-				return (cont);
-			if (aux == '%')
-			{
-				flag++;
-			} else
-			{
-				cont_fm = function_manager(aux, arg);
-				if (cont_fm >= 0 && cont_fm != -1)
-				{
-					i++;
-					aux = string[i];
-					if (aux == '%')
-						flag--;
-					cont = cont + cont_fm;
-				} else if (cont_fm == -1 && aux != '\n')
-				{
-					cont += _putchar('%');
-				}
-			}
-		}
-		check_per = check_percent(&flag, aux);
-		cont += check_per;
-		if (check_per == 0 && aux != '\0' && aux != '%')
-			cont += _putchar(aux), i++;
-		check_per = 0;
-	}
-	return (cont);
-}
-/**
- * check_percent - call function manager
- *@flag: value by reference
- *@aux: character
- *Description: This function print % pear
- *Return: 1 if % is printed
- */
-int check_percent(int *flag, char aux)
-{
-	int tmp_flag;
-	int cont = 0;
-
-	tmp_flag = *flag;
-	if (tmp_flag == 2 && aux == '%')
-	{
-		_putchar('%');
-		tmp_flag = 0;
-		cont = 1;
-	}
-	return (cont);
-}
-
-/**
- * call_function_manager - call function manager
- *@aux: character parameter
- *@arg: va_list arg
- *Description: This function call function manager
- *Return: num of characteres printed
- */
-
-int call_function_manager(char aux, va_list arg)
-{
-	int cont = 0;
-
-	cont = function_manager(aux, arg);
-	return (cont);
+	va_start(list, format);
+	a = print_op(format, ops, list);
+	va_end(list);
+	return (a);
 }
