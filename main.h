@@ -1,22 +1,21 @@
 #ifndef HEADER_MAIN
 #define HEADER_MAIN
 
-#include <unistd.h>
-#include <stdlib.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /**
-* struct convert - defines a structure for symbols and functions
-*
-* @sym: The operator
-* @f: The function associated
-*/
-struct conversion
+ * struct fmt - function to check for formats
+ * @type: The format to print
+ * @f: The print function to use
+ */
+typedef struct fmt
 {
-	char *sym;
-	int (*f)(va_list);
-};
-typedef struct conversion conver_t;
+	char *type;
+	int (*f)();
+} fmt_t;
 
 
 
@@ -25,6 +24,7 @@ int _putchar(char c);
 void _puts(char *str);
 int _strlen(char *s);
 int _printf(const char *format, ...);
+int print_op(const char *format, fmt_t *print_arr, va_list list);
 char *convert_to(char representation[], unsigned int num, int base);
 int function_manager(char c, va_list arg);
 int _switch(char c, va_list arg);
